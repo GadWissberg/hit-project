@@ -2,7 +2,11 @@ import lombok.Getter;
 
 import java.util.concurrent.*;
 
-
+/**
+ * We've implemented this using the Adapter DP.
+ *
+ * @param <T> The data type the task handles.
+ */
 @Getter
 public class TaskWrapper<T> implements RunnableFuture<T>, Comparable<TaskWrapper<T>> {
 	private final TaskType taskType;
