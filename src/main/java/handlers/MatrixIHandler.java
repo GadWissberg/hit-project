@@ -1,9 +1,10 @@
-package test;
+package handlers;
 
-import java.io.InputStream;
+import test.Index;
+import test.Matrix;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -23,11 +24,9 @@ public class MatrixIHandler implements IHandler {
     }
 
     @Override
-    public void handle(InputStream inClient, OutputStream outClient) throws Exception {
+    public void handle(final ObjectInputStream objectInputStream,
+                       final ObjectOutputStream objectOutputStream) throws Exception {
         System.out.println("server::start handle");
-
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outClient);
-        ObjectInputStream objectInputStream = new ObjectInputStream(inClient);
 
         this.resetParams();
 

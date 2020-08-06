@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class Matrix implements Serializable {
 	int[][] primitiveMatrix;
@@ -13,18 +14,6 @@ public class Matrix implements Serializable {
 				.stream(oArray)
 				.map(row -> row.clone())
 				.toArray(value -> new int[value][]);
-	}
-
-	public static void main(String[] args) {
-		int[][] source = {
-				{0, 1, 0},
-				{1, 0, 1},
-				{1, 0, 1}
-		};
-		Matrix matrix = new Matrix(source);
-		matrix.printMatrix();
-		System.out.println(matrix.getAdjacentIndices(new Index(1, 1)));
-		System.out.println(matrix.getReachables(new Index(1, 1)));
 	}
 
 	public void printMatrix() {
@@ -74,45 +63,26 @@ public class Matrix implements Serializable {
 		return list;
 	}
 
-	public Collection<Index> getDiagonalAdjacentIndices(final Index index) {
-		Collection<Index> list = new ArrayList<>();
-		try {
-			addIndexToDiagonalAdjacentIndices(list, index.row - 1, index.column + 1);
-		} catch (final ArrayIndexOutOfBoundsException ignored) {
-		}
-		try {
-			addIndexToDiagonalAdjacentIndices(list, index.row - 1, index.column - 1);
-		} catch (final ArrayIndexOutOfBoundsException ignored) {
-		}
-		try {
-			addIndexToDiagonalAdjacentIndices(list, index.row + 1, index.column - 1);
-		} catch (final ArrayIndexOutOfBoundsException ignored) {
-		}
-		try {
-			addIndexToDiagonalAdjacentIndices(list, index.row + 1, index.column + 1);
-		} catch (final ArrayIndexOutOfBoundsException ignored) {
-		}
-		return list;
-	}
-
-	private void addIndexToDiagonalAdjacentIndices(final Collection<Index> list, final int row, final int column) {
-		Index ind = new Index(row, column);
-		getValue(ind);
-		list.add(ind);
-	}
-
 	public int getValue(Index index) {
 		return primitiveMatrix[index.row][index.column];
 	}
 
-	public Collection<Index> getReachables(final Index index) {
+	public static void main(String[] args) {
+		int[][] source = {
+				{0, 1, 0},
+				{1, 0, 1},
+				{1, 0, 1}
+		};
+		Matrix matrix = new Matrix(source);
+		matrix.printMatrix();
+		System.out.println(matrix.getAdjacentIndices(new Index(1, 1)));
+		System.out.println(matrix.getReachables(new Index(1, 1)));
+	}
+
+	public Collection<Index> getReachables(Index index) {
 		ArrayList<Index> filteredIndices = new ArrayList<>();
-		this.getAdjacentIndices(index).stream()
-				.filter(i -> getValue(i) == 1)
-				.forEach(filteredIndices::add);
-		this.getDiagonalAdjacentIndices(index).stream()
-				.filter(i -> getValue(i) == 1)
-				.forEach(filteredIndices::add);
+		this.getAdjacentIndices(index).stream().filter(i -> getValue(i) == 1)
+				.map(neighbor -> filteredIndices.add(neighbor)).collect(Collectors.toList());
 		return filteredIndices;
 	}
 }
