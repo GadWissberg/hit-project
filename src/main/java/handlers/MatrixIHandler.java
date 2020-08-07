@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class MatrixIHandler implements IHandler {
 
@@ -23,19 +24,20 @@ public class MatrixIHandler implements IHandler {
         this.end = null;
     }
 
-    @Override
-    public void handle(final ObjectInputStream objectInputStream,
-                       final ObjectOutputStream objectOutputStream) throws Exception {
-        System.out.println("server::start handle");
+	@Override
+	public void handle(final ObjectInputStream objectInputStream,
+					   final ObjectOutputStream objectOutputStream,
+					   final ThreadPoolExecutor executor) throws Exception {
+		System.out.println("server::start handle");
 
-        this.resetParams();
+		this.resetParams();
 
-        boolean dowork = true;
-        while (dowork) {
-            switch (objectInputStream.readObject().toString()) {
-                case "stop": {
-                    dowork = false;
-                    break;
+		boolean dowork = true;
+		while (dowork) {
+			switch (objectInputStream.readObject().toString()) {
+				case "stop": {
+					dowork = false;
+					break;
                 }
                 case "matrix": {
                     int[][] primitiveMatrix = (int[][]) objectInputStream.readObject();
@@ -56,7 +58,7 @@ public class MatrixIHandler implements IHandler {
                     Index indexAdjacentIndices = (Index) objectInputStream.readObject();
                     Collection<Index> adjacentIndices = new ArrayList<>();
                     if (this.matrix != null) {
-                        adjacentIndices.addAll(this.matrix.getAdjacentIndices(indexAdjacentIndices));
+						adjacentIndices.addAll(this.matrix.getAxisAdjacentIndices(indexAdjacentIndices));
                     }
                     // sending getAdjacentIndices
                     System.out.println("server::getAdjacentIndices:: " + adjacentIndices);

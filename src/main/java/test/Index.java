@@ -7,12 +7,12 @@ public class Index implements Serializable {
 	public int row, column;
 
 	// Constructor
-	public Index(int oRow, int oColumn) {
+	public Index(final int oRow, final int oColumn) {
 		this.row = oRow;
 		this.column = oColumn;
 	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		Index myIndex = new Index(2, 2);
 		System.out.println(myIndex);
 	}
@@ -23,7 +23,7 @@ public class Index implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Index index = (Index) o;

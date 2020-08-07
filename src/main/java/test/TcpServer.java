@@ -59,7 +59,7 @@ public class TcpServer {
 								String commandString = objectInputStream.readObject().toString();
 								if (handlersMap.containsKey(commandString)) {
 									IHandler handler = handlersMap.get(commandString);
-									handler.handle(objectInputStream, objectOutputStream);
+									handler.handle(objectInputStream, objectOutputStream, executor);
 								}
 								System.out.println("server::Close all streams!!!!");
 								// Close all streams
