@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 // This class represents a matrix that can be traversed as a graph. i.e.,
 // has an origin and the ability to get reachable nodes from a given source
 public class MatrixAsGraph implements Traversable<Index> {
-	private final Matrix matrix;
+	private Matrix matrix;
 
 	@Getter(AccessLevel.PUBLIC)
 	@Setter(AccessLevel.PUBLIC)

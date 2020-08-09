@@ -68,4 +68,5 @@ public class GraphNode<T> implements Serializable {
 	public String toString() {
 		return Optional.ofNullable(data).isPresent() ? data.toString() : super.toString();
 	}
+
 }

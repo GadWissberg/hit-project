@@ -75,9 +75,9 @@ public class Client {
 
 		// sending #1 matrix
 		int[][] matrix = {
-				{0, 1, 0},
+				{0, 1, 1},
 				{1, 0, 1},
-				{1, 1, 1}
+				{1, 0, 1}
 		};
 		toServer.writeObject(TASKS_INPUT_MATRIX);
 		toServer.writeObject(matrix);

@@ -43,7 +43,7 @@ public class TcpServer {
 		Runnable mainLogic = () -> {
 			try {
 				executor = new ThreadPoolExecutor(
-						3, 5, 10,
+						10, 15, 10,
 						TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 				ServerSocket server = new ServerSocket(port);
 				server.setSoTimeout(1000);
