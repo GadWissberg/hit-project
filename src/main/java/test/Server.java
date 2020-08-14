@@ -1,7 +1,7 @@
 package test;
 
+import handlers.Handler;
 import handlers.HandlersMapping;
-import handlers.IHandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,34 +16,32 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * This class represents a multi-threaded server
- */
-public class TcpServer {
+public class Server {
+	public static final int PORT = 8010;
 	private final int port;
 	private volatile boolean stopServer;
 	private ThreadPoolExecutor executor;
 
-	public TcpServer(final int port) {
+	public Server(final int port) {
 		this.port = port;
 		stopServer = false;
 		executor = null;
 	}
 
 	public static void main(final String[] args) {
-		TcpServer tcpServer = new TcpServer(8010);
-		Map<String, IHandler> handlersMapping = new HashMap<>();
+		Server server = new Server(PORT);
+		Map<String, Handler> handlersMapping = new HashMap<>();
 		HandlersMapping[] handlers = HandlersMapping.values();
 		Arrays.stream(handlers).forEach(handler -> handlersMapping.put(handler.name().toLowerCase(), handler.getHandler()));
-		tcpServer.run(handlersMapping);
+		server.run(handlersMapping);
 	}
 
-	public void run(final Map<String, IHandler> handlersMap) {
+	public void run(final Map<String, Handler> handlersMap) {
 
 		Runnable mainLogic = () -> {
 			try {
 				executor = new ThreadPoolExecutor(
-						10, 15, 10,
+						80, 120, 10,
 						TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 				ServerSocket server = new ServerSocket(port);
 				server.setSoTimeout(1000);
@@ -58,7 +56,7 @@ public class TcpServer {
 								ObjectInputStream objectInputStream = new ObjectInputStream(request.getInputStream());
 								String commandString = objectInputStream.readObject().toString();
 								if (handlersMap.containsKey(commandString)) {
-									IHandler handler = handlersMap.get(commandString);
+									Handler handler = handlersMap.get(commandString);
 									handler.handle(objectInputStream, objectOutputStream, executor);
 								}
 								System.out.println("server::Close all streams!!!!");

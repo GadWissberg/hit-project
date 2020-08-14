@@ -1,6 +1,6 @@
 package graph;
 
-import handlers.routes.RoutesResult;
+import handlers.RoutesResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public class TraverseLogic<T> implements Traverse<T> {
 
 	@NotNull
 	@Override
-	public AbstractList<T> traverse(@NotNull final Traversable<T> graph) {
+	public AbstractList<T> findConnectedComponents(@NotNull final Traversable<T> graph) {
 		// get ThreadLocal collections
 		Collection<GraphNode<T>> grey = this.greyCollection.get();
 		Set<GraphNode<T>> black = this.blackCollection.get();
@@ -110,7 +110,6 @@ public class TraverseLogic<T> implements Traverse<T> {
 					route.addAll(subRoute);
 					routes.getResult().add(route);
 				});
-				System.out.println(Thread.currentThread().getId() + " | " + subRoutes.toString());
 			} catch (final InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -122,4 +121,71 @@ public class TraverseLogic<T> implements Traverse<T> {
 		}
 		return routes;
 	}
+
+	public RoutesResult<T> findShortestPaths(final Traversable<T> graph, final T source, final T destination) {
+		RoutesResult<T> routes = new RoutesResult<>();
+		Set<GraphNode<T>> myBlackNodes = new HashSet<>();
+		Stack<GraphNode<T>> grayNodes = new Stack<>();
+		GraphNode<T> sourceNode = new GraphNode<>(source);
+		grayNodes.push(sourceNode);
+
+		Map<GraphNode<T>, GraphNode<T>> predecessors = new HashMap<>();
+		Map<GraphNode<T>, Integer> distances = new HashMap<>();
+		distances.put(sourceNode, 0);
+		int distance = 0;
+		int minDistance = Integer.MAX_VALUE;
+
+		GraphNode<T> destNode = new GraphNode<>(destination);
+		while (grayNodes.size() > 0) {
+			GraphNode<T> removedNode = grayNodes.pop();
+			myBlackNodes.add(removedNode);
+			Collection<GraphNode<T>> reachableNodes = graph.getReachableNodes(removedNode);
+
+			reachableNodes.stream()
+					.filter(graphNode -> !myBlackNodes.contains(graphNode)
+							&& !grayNodes.contains(graphNode)
+							&& !graphNode.equals(destNode))
+					.forEach(node -> {
+						grayNodes.push(node);
+						predecessors.put(node, removedNode);
+						distances.put(node, distances.get(removedNode) + 1);
+					});
+
+
+			if (reachableNodes.stream().anyMatch(node -> node.equals(destNode))) {
+				int currentDistance = distances.get(removedNode) + 1;
+				if (currentDistance <= minDistance) {
+					ArrayList<GraphNode<T>> shortestPath = new ArrayList<>();
+					minDistance = currentDistance;
+					GraphNode<T> predecessor = removedNode;
+					shortestPath.add(0, destNode);
+					shortestPath.add(0, removedNode);
+					do {
+						predecessor = predecessors.get(predecessor);
+						if (predecessor != null) {
+							shortestPath.add(0, predecessor);
+						}
+					}
+					while (predecessor != null && !predecessor.equals(sourceNode));
+					routes.getResult().add(shortestPath);
+				}
+
+			} else if (reachableNodes.size() == 0 || myBlackNodes.containsAll(reachableNodes)) {
+				myBlackNodes.remove(removedNode);
+				GraphNode<T> predecessor = removedNode;
+				do {
+					myBlackNodes.remove(predecessor);
+					predecessor = predecessors.get(removedNode);
+				}
+				while (!predecessor.equals(grayNodes.peek()));
+			}
+
+
+		}
+
+		return routes;
+
+	}
+
+
 }

@@ -1,4 +1,4 @@
-package handlers.routes;
+package handlers.second;
 
 import lombok.Getter;
 import test.Index;
@@ -8,41 +8,37 @@ import java.io.IOException;
 
 @Getter
 public enum RoutesHandlerCommands {
-	MATRIX((inputStream, handler, executor) -> {
+	MATRIX((inputStream, objectOutputStream, handler, executor) -> {
 		try {
 			handler.setMatrix(new Matrix((int[][]) inputStream.readObject()));
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}),
-	SOURCE((inputStream, handler, executor) -> {
+	SOURCE((inputStream, objectOutputStream, handler, executor) -> {
 		try {
 			handler.setSource((Index) inputStream.readObject());
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}),
-	DEST((inputStream, handler, executor) -> {
+	DEST((inputStream, objectOutputStream, handler, executor) -> {
 		try {
-			handler.setDest((Index) inputStream.readObject());
+			handler.setDestination((Index) inputStream.readObject());
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}),
-	BEGIN((inputStream, handler, executor) -> {
-		try {
-			handler.begin(executor);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	BEGIN((inputStream, objectOutputStream, handler, executor) -> {
+		handler.begin(executor, objectOutputStream);
 	}),
-	STOP((inputStream, handler, executor) -> {
+	STOP((inputStream, objectOutputStream, handler, executor) -> {
 		handler.stop();
 	});
 
-	private final Job job;
+	private final Job<Index> job;
 
-	RoutesHandlerCommands(final Job job) {
+	RoutesHandlerCommands(final Job<Index> job) {
 		this.job = job;
 	}
 }

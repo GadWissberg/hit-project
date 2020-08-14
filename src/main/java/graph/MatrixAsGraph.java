@@ -33,6 +33,10 @@ public class MatrixAsGraph implements Traversable<Index> {
 		this.root = source;
 	}
 
+	public MatrixAsGraph(@NotNull final Matrix matrix) {
+		this(matrix, null);
+	}
+
 	@Override
 	public GraphNode<Index> getOrigin() {
 		if (this.root == null) throw new NullPointerException("Source index NOT initialized");

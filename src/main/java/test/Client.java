@@ -2,20 +2,22 @@ package test;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 public class Client {
 
 	public static final String TASK_HEADER_TASK_1 = "task_1";
 	public static final String TASK_HEADER_TASK_2 = "task_2";
-	public static final String TASK_2_INPUT_SOURCE = "source";
-	public static final String TASK_2_INPUT_DESTINATION = "dest";
+	public static final String TASK_HEADER_TASK_3 = "task_3";
+	public static final String TASKS_INPUT_SOURCE = "source";
+	public static final String TASKS_INPUT_DESTINATION = "dest";
 	public static final String TASKS_INPUT_MATRIX = "matrix";
 	public static final String TASKS_COMMAND_STOP = "stop";
-	private static final String TASK_2_COMMAND_BEGIN = "begin";
+	public static final String LOG_TASK_RESULT = "Task %s result:\n";
+	private static final String TASKS_COMMAND_BEGIN = "begin";
 
-	public static void main(final String[] args) throws IOException, ClassNotFoundException {
+	public static void main(final String[] args) throws IOException {
 		Socket socket = new Socket("127.0.0.1", 8010);
 		System.out.println("client::Socket");
 
@@ -25,7 +27,8 @@ public class Client {
 		ObjectInputStream fromServer = new ObjectInputStream(inputStream);
 
 //		doFirstMission(toServer, fromServer);
-		doSecondMission(toServer, fromServer);
+//		doSecondMission(toServer, fromServer);
+		doThirdMission(toServer, fromServer);
 
 		System.out.println("client::Close all streams!!!!");
 		fromServer.close();
@@ -35,60 +38,87 @@ public class Client {
 	}
 
 	private static void doFirstMission(final ObjectOutputStream toServer, final ObjectInputStream fromServer)
-			throws IOException, ClassNotFoundException {
+			throws IOException {
 
 
 		toServer.writeObject(TASK_HEADER_TASK_1);
 
 		// sending #1 matrix
 		int[][] source = {
-				{0, 1, 0},
-				{1, 0, 1},
-				{1, 0, 1}
+				{0, 1, 0, 1},
+				{1, 0, 0, 0},
+				{1, 0, 1, 0},
+				{0, 0, 1, 0}
 		};
-		toServer.writeObject("matrix");
+		toServer.writeObject(TASKS_INPUT_MATRIX);
 		toServer.writeObject(source);
 
-		// sending #3 index for getAdjacentIndices
-		toServer.writeObject("AdjacentIndices");
-		toServer.writeObject(new Index(1, 1));
-		// receiving #1 getAdjacentIndices
-		Collection<Index> AdjacentIndices =
-				new ArrayList<>((Collection<Index>) fromServer.readObject());
-		System.out.println("client::getAdjacentIndices:: " + AdjacentIndices);
+		toServer.writeObject(TASKS_COMMAND_BEGIN);
 
-		// sending #4 index for getReachables
-		toServer.writeObject("Reachables");
+		try {
+			List<HashSet<Index>> result = (List<HashSet<Index>>) fromServer.readObject();
+			System.out.printf(LOG_TASK_RESULT, 1);
+			result.forEach(System.out::println);
+		} catch (final ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 
-		toServer.writeObject(new Index(1, 1));
-		// receiving #2 getReachables
-		Collection<Index> ReachablesIndices =
-				new ArrayList<>((Collection<Index>) fromServer.readObject());
-		System.out.println("client::ReachablesIndices:: " + ReachablesIndices);
+		toServer.writeObject(TASKS_COMMAND_STOP);
 
-		toServer.writeObject("stop");
+
 	}
 
 	private static void doSecondMission(final ObjectOutputStream toServer, final ObjectInputStream fromServer)
-			throws IOException, ClassNotFoundException {
+			throws IOException {
 		toServer.writeObject(TASK_HEADER_TASK_2);
 
-		// sending #1 matrix
 		int[][] matrix = {
-				{0, 1, 1},
+				{0, 1, 0},
+				{1, 1, 1},
 				{1, 0, 1},
-				{1, 0, 1}
 		};
 		toServer.writeObject(TASKS_INPUT_MATRIX);
 		toServer.writeObject(matrix);
 
-		toServer.writeObject(TASK_2_INPUT_SOURCE);
-		toServer.writeObject(new Index(0, 1));
+		toServer.writeObject(TASKS_INPUT_SOURCE);
+		toServer.writeObject(new Index(2, 0));
 
-		toServer.writeObject(TASK_2_INPUT_DESTINATION);
+		toServer.writeObject(TASKS_INPUT_DESTINATION);
 		toServer.writeObject(new Index(2, 2));
 
-		toServer.writeObject(TASK_2_COMMAND_BEGIN);
+		toServer.writeObject(TASKS_COMMAND_BEGIN);
+
+		try {
+			String result = (String) fromServer.readObject();
+			System.out.printf(LOG_TASK_RESULT, 2);
+			System.out.println(result);
+		} catch (final ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		toServer.writeObject(TASKS_COMMAND_STOP);
+	}
+
+	private static void doThirdMission(final ObjectOutputStream toServer, final ObjectInputStream fromServer)
+			throws IOException {
+		toServer.writeObject(TASK_HEADER_TASK_3);
+
+		int[][] matrix = {
+				{0, 1, 1, 0},
+				{1, 1, 1, 1},
+				{1, 0, 0, 1},
+				{1, 1, 1, 1}
+		};
+		toServer.writeObject(TASKS_INPUT_MATRIX);
+		toServer.writeObject(matrix);
+
+		toServer.writeObject(TASKS_INPUT_SOURCE);
+		toServer.writeObject(new Index(1, 0));
+
+		toServer.writeObject(TASKS_INPUT_DESTINATION);
+		toServer.writeObject(new Index(3, 3));
+
+		toServer.writeObject(TASKS_COMMAND_BEGIN);
 
 		toServer.writeObject(TASKS_COMMAND_STOP);
 	}
