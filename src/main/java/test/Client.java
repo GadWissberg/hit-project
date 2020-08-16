@@ -105,8 +105,8 @@ public class Client {
 
 		int[][] matrix = {
 				{0, 1, 1, 0},
-				{1, 1, 1, 1},
-				{1, 0, 0, 1},
+				{1, 0, 1, 1},
+				{1, 0, 1, 0},
 				{1, 1, 1, 1}
 		};
 		toServer.writeObject(TASKS_INPUT_MATRIX);
@@ -116,7 +116,7 @@ public class Client {
 		toServer.writeObject(new Index(1, 0));
 
 		toServer.writeObject(TASKS_INPUT_DESTINATION);
-		toServer.writeObject(new Index(3, 3));
+		toServer.writeObject(new Index(1, 3));
 
 		toServer.writeObject(TASKS_COMMAND_BEGIN);
 
