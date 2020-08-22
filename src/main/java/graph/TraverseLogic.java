@@ -209,4 +209,8 @@ public class TraverseLogic<T> implements Traverse<T> {
 	}
 
 
+	public RoutesResult<T> checkSubmarines(final Traversable<T> graph, final T sourceData) {
+		Map<Direction, GraphNode<T>> result = graph.getReachableNodesWithDirections(new GraphNode<>(sourceData));
+		return null;
+	}
 }

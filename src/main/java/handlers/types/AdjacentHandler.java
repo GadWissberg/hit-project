@@ -1,13 +1,13 @@
-package handlers.first;
+package handlers.types;
 
 import graph.MatrixAsGraph;
 import graph.Traverse;
 import graph.TraverseLogic;
 import handlers.BaseHandler;
 import test.Index;
+import test.Matrix;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,19 +17,10 @@ public class AdjacentHandler extends BaseHandler<Index> {
 
 	private static final String RESPONSE_RESULT = "result";
 
-	@Override
-	public void handle(final ObjectInputStream objectInputStream,
-					   final ObjectOutputStream objectOutputStream,
-					   final ThreadPoolExecutor executor) throws Exception {
-		while (!stopped) {
-			String commandString = objectInputStream.readObject().toString();
-			AdjacentHandlerInputKeys command = AdjacentHandlerInputKeys.valueOf(commandString.toUpperCase());
-			command.getJob().run(objectInputStream, objectOutputStream, this, executor);
-		}
-	}
 
 	@Override
 	public void begin(final ThreadPoolExecutor executor, final ObjectOutputStream objectOutputStream) {
+		Matrix matrix = getMatrix();
 		if (matrix != null) {
 			TraverseLogic<Index> logic = new TraverseLogic<>();
 			MatrixAsGraph graph = new MatrixAsGraph(matrix);
@@ -61,18 +52,4 @@ public class AdjacentHandler extends BaseHandler<Index> {
 		}
 	}
 
-	@Override
-	public void stop() {
-
-	}
-
-	@Override
-	public void setSource(final Index source) {
-
-	}
-
-	@Override
-	public void setDestination(final Index dest) {
-
-	}
 }

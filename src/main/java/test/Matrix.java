@@ -107,13 +107,17 @@ public class Matrix implements Serializable {
 	}
 
 	public Collection<Index> getReachables(final Index index) {
+		return getReachables(index, true);
+	}
+
+	public Collection<Index> getReachables(final Index index, final boolean includeDiagonal) {
 		ArrayList<Index> filteredIndices = new ArrayList<>();
-		this.getAxisAdjacentIndices(index).stream()
-				.filter(i -> getValue(i) == 1)
-				.forEach(filteredIndices::add);
-		this.getDiagonalAdjacentIndices(index).stream()
-				.filter(i -> getValue(i) == 1)
-				.forEach(filteredIndices::add);
+		this.getAxisAdjacentIndices(index).stream().filter(i -> getValue(i) == 1).forEach(filteredIndices::add);
+		if (includeDiagonal) {
+			this.getDiagonalAdjacentIndices(index).stream()
+					.filter(i -> getValue(i) == 1)
+					.forEach(filteredIndices::add);
+		}
 		return filteredIndices;
 	}
 

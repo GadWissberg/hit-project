@@ -10,6 +10,7 @@ public class Client {
 	public static final String TASK_HEADER_TASK_1 = "task_1";
 	public static final String TASK_HEADER_TASK_2 = "task_2";
 	public static final String TASK_HEADER_TASK_3 = "task_3";
+	public static final String TASK_HEADER_TASK_4 = "task_4";
 	public static final String TASKS_INPUT_SOURCE = "source";
 	public static final String TASKS_INPUT_DESTINATION = "dest";
 	public static final String TASKS_INPUT_MATRIX = "matrix";
@@ -28,7 +29,8 @@ public class Client {
 
 //		doFirstMission(toServer, fromServer);
 //		doSecondMission(toServer, fromServer);
-		doThirdMission(toServer, fromServer);
+//		doThirdMission(toServer, fromServer);
+		doFourthMission(toServer, fromServer);
 
 		System.out.println("client::Close all streams!!!!");
 		fromServer.close();
@@ -119,6 +121,47 @@ public class Client {
 		toServer.writeObject(new Index(1, 3));
 
 		toServer.writeObject(TASKS_COMMAND_BEGIN);
+
+
+		try {
+			String result = (String) fromServer.readObject();
+			System.out.printf(LOG_TASK_RESULT, 3);
+			System.out.println(result);
+		} catch (final ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		toServer.writeObject(TASKS_COMMAND_STOP);
+	}
+
+	private static void doFourthMission(final ObjectOutputStream toServer, final ObjectInputStream fromServer)
+			throws IOException {
+		toServer.writeObject(TASK_HEADER_TASK_4);
+
+		int[][] matrix = {
+				{1, 1, 1},
+				{1, 1, 1},
+				{1, 0, 1}
+		};
+		toServer.writeObject(TASKS_INPUT_MATRIX);
+		toServer.writeObject(matrix);
+
+		toServer.writeObject(TASKS_INPUT_SOURCE);
+		toServer.writeObject(new Index(1, 0));
+
+		toServer.writeObject(TASKS_INPUT_DESTINATION);
+		toServer.writeObject(new Index(1, 3));
+
+		toServer.writeObject(TASKS_COMMAND_BEGIN);
+
+
+		try {
+			String result = (String) fromServer.readObject();
+			System.out.printf(LOG_TASK_RESULT, 3);
+			System.out.println(result);
+		} catch (final ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		toServer.writeObject(TASKS_COMMAND_STOP);
 	}

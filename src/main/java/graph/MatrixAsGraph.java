@@ -8,6 +8,9 @@ import test.Index;
 import test.Matrix;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -22,7 +25,7 @@ import java.util.stream.Collectors;
 // This class represents a matrix that can be traversed as a graph. i.e.,
 // has an origin and the ability to get reachable nodes from a given source
 public class MatrixAsGraph implements Traversable<Index> {
-	private Matrix matrix;
+	private final Matrix matrix;
 
 	@Getter(AccessLevel.PUBLIC)
 	@Setter(AccessLevel.PUBLIC)
@@ -45,8 +48,42 @@ public class MatrixAsGraph implements Traversable<Index> {
 
 	@Override
 	public Collection<GraphNode<Index>> getReachableNodes(final GraphNode<Index> source) {
-		return this.matrix.getReachables(source.getData()).stream().filter(index -> matrix.getValue(index) == 1)
-				.map(neighbor -> new GraphNode<>(neighbor, source)).collect(Collectors.toList());
+		return this.matrix
+				.getReachables(source.getData())
+				.stream()
+				.map(neighbor -> new GraphNode<>(neighbor, source))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Map<Direction, GraphNode<Index>> getReachableNodesWithDirections(final GraphNode<Index> source) {
+		if (source.getData() == null) throw new NullPointerException();
+		HashMap<Direction, GraphNode<Index>> result = new HashMap<>();
+		return this.matrix
+				.getReachables(source.getData(), false)
+				.stream()
+				.map((Function<Index, GraphNode<Index>>) GraphNode::new)
+				.collect(Collectors.toMap(indexGraphNode -> {
+					Index data = indexGraphNode.getData();
+					int srcCol = source.getData().column;
+					Direction dir = null;
+					if (data != null) {
+						int column = data.column;
+						int row = data.row;
+						if (column < srcCol) {
+							dir = Direction.WEST;
+						} else if (column > srcCol) {
+							dir = Direction.EAST;
+						} else {
+							if (row > source.getData().row) {
+								dir = Direction.SOUTH;
+							} else if (row < source.getData().row) {
+								dir = Direction.NORTH;
+							}
+						}
+					}
+					return dir;
+				}, indexGraphNode -> indexGraphNode));
 	}
 
 

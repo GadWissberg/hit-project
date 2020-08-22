@@ -1,6 +1,5 @@
-package handlers.first;
+package handlers;
 
-import handlers.second.Job;
 import lombok.Getter;
 import test.Index;
 import test.Matrix;
@@ -8,10 +7,24 @@ import test.Matrix;
 import java.io.IOException;
 
 @Getter
-public enum AdjacentHandlerInputKeys {
+public enum ApiCalls {
 	MATRIX((inputStream, objectOutputStream, handler, executor) -> {
 		try {
 			handler.setMatrix(new Matrix((int[][]) inputStream.readObject()));
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}),
+	SOURCE((inputStream, objectOutputStream, handler, executor) -> {
+		try {
+			handler.setSource((Index) inputStream.readObject());
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}),
+	DEST((inputStream, objectOutputStream, handler, executor) -> {
+		try {
+			handler.setDestination((Index) inputStream.readObject());
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -23,9 +36,9 @@ public enum AdjacentHandlerInputKeys {
 		handler.stop();
 	});
 
-	private final Job<Index> job;
+	private final Job job;
 
-	AdjacentHandlerInputKeys(final Job<Index> job) {
+	ApiCalls(final Job job) {
 		this.job = job;
 	}
 }

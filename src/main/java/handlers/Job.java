@@ -1,6 +1,4 @@
-package handlers.second;
-
-import handlers.BaseHandler;
+package handlers;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
