@@ -139,9 +139,9 @@ public class Client {
 		toServer.writeObject(TASK_HEADER_TASK_4);
 
 		int[][] matrix = {
-				{1, 1, 1},
-				{1, 1, 1},
-				{1, 0, 1}
+				{1, 1, 0, 1, 1},
+				{0, 0, 0, 1, 1},
+				{1, 1, 0, 1, 1},
 		};
 		toServer.writeObject(TASKS_INPUT_MATRIX);
 		toServer.writeObject(matrix);

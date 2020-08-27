@@ -32,6 +32,12 @@ public class TraverseLogic<T> implements Traverse<T> {
 	@NotNull
 	@Override
 	public AbstractList<T> findConnectedComponents(@NotNull final Traversable<T> graph) {
+		return findConnectedComponents(graph, true);
+	}
+
+	@NotNull
+	@Override
+	public AbstractList<T> findConnectedComponents(@NotNull final Traversable<T> graph, final boolean diagonal) {
 		// get ThreadLocal collections
 		Collection<GraphNode<T>> grey = this.greyCollection.get();
 		Set<GraphNode<T>> black = this.blackCollection.get();
@@ -41,7 +47,7 @@ public class TraverseLogic<T> implements Traverse<T> {
 		while (!grey.isEmpty()) {
 			GraphNode<T> removedNode = popFromLocalGrayStack();
 			black.add(removedNode);
-			Collection<GraphNode<T>> reachableNodes = graph.getReachableNodes(removedNode);
+			Collection<GraphNode<T>> reachableNodes = graph.getReachableNodes(removedNode, diagonal);
 			// add each reachable node if it was not finished with, nor previously discovered
 			reachableNodes.stream()
 					.filter(graphNode -> !black.contains(graphNode) && !grey.contains(graphNode))
@@ -206,11 +212,5 @@ public class TraverseLogic<T> implements Traverse<T> {
 
 		return routes;
 
-	}
-
-
-	public RoutesResult<T> checkSubmarines(final Traversable<T> graph, final T sourceData) {
-		Map<Direction, GraphNode<T>> result = graph.getReachableNodesWithDirections(new GraphNode<>(sourceData));
-		return null;
 	}
 }

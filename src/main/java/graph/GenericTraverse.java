@@ -11,4 +11,6 @@ import java.util.Collection;
  */
 public interface GenericTraverse<R, V extends Traversable<R>> {
 	Collection<R> findConnectedComponents(@NotNull final V Graph);
+
+	Collection<R> findConnectedComponents(@NotNull final V Graph, final boolean diagonal);
 }

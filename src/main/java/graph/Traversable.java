@@ -1,7 +1,6 @@
 package graph;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * determines the functionality of a traversable graph
@@ -11,7 +10,8 @@ import java.util.Map;
 public interface Traversable<T> {
 	GraphNode<T> getOrigin();
 
+	Collection<GraphNode<T>> getReachableNodes(final GraphNode<T> source, boolean diagonal);
+
 	Collection<GraphNode<T>> getReachableNodes(final GraphNode<T> source);
 
-	Map<Direction, GraphNode<T>> getReachableNodesWithDirections(final GraphNode<T> source);
 }

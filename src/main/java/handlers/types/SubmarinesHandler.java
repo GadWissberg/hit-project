@@ -3,18 +3,17 @@ package handlers.types;
 import graph.MatrixAsGraph;
 import graph.TraverseLogic;
 import handlers.BaseHandler;
-import handlers.RoutesResult;
+import org.jetbrains.annotations.NotNull;
 import test.Index;
 import test.Matrix;
 
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class SubmarinesHandler extends BaseHandler<Index> {
+
+	public static final int FAIL = -1;
 
 	@Override
 	public void begin(final ThreadPoolExecutor executor, final ObjectOutputStream objectOutputStream) {
@@ -22,24 +21,43 @@ public class SubmarinesHandler extends BaseHandler<Index> {
 		MatrixAsGraph graph = new MatrixAsGraph(getMatrix());
 
 		Matrix matrix = getMatrix();
+		@NotNull List<HashSet<Index>> components;
+		final int[] result = {0};
 		if (matrix != null) {
-
-			List<HashSet<Index>> indexList = Collections.synchronizedList(new ArrayList<>());
-			HashSet<Index> seenIndexes = new HashSet<>();
-
-			TraverseLogic<Index> algorithm = new TraverseLogic<>();
-			int[][] primitiveMatrix = matrix.getPrimitiveMatrix();
-			for (int row = 0; row < primitiveMatrix.length; row++) {
-				for (int column = 0; column < primitiveMatrix[0].length; column++) {
-					final Index index = new Index(row, column);
-					if (matrix.getValue(index) == 1) {
-						graph.setRoot(index);
-						RoutesResult<Index> list = algorithm.checkSubmarines(graph, index);
+			AdjacentHandler adjacentHandler = new AdjacentHandler();
+			components = adjacentHandler.findAllComponents(matrix, false);
+			components.forEach(component -> {
+				if (result[0] > -1) {
+					if (component.size() > 1) {
+						Object[] hashSet = component.toArray();
+						Optional<Index> topMostIndex;
+						topMostIndex = component.stream().min(Comparator.comparingInt(index -> index.row));
+						if (topMostIndex.isPresent()) {
+							Index finalTopMostIndex = topMostIndex.get();
+							Optional<Index> topLeftCorner = component.stream()
+									.filter(ind -> finalTopMostIndex.row >= ind.row)
+									.min(Comparator.comparingInt(index -> index.column));
+							if (topLeftCorner.isPresent()) {
+								Optional<Index> bottomMostIndex = component.stream().max(Comparator.comparingInt(index -> index.row));
+								Optional<Index> bottomRightCorner = component.stream()
+										.filter(ind -> bottomMostIndex.get().row <= ind.row)
+										.max(Comparator.comparingInt(index -> index.column));
+								if (bottomRightCorner.isPresent()) {
+									int rectSize = (bottomRightCorner.get().row - topLeftCorner.get().row + 1) * (bottomRightCorner.get().column - topLeftCorner.get().column + 1);
+									if (rectSize == component.size()) {
+										result[0]++;
+									} else {
+										result[0] = FAIL;
+									}
+								}
+							}
+						}
+					} else {
+						result[0] = FAIL;
 					}
 				}
-			}
-
-
+			});
+			System.out.println(Arrays.toString(result));
 		}
 
 

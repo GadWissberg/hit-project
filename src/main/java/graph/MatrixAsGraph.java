@@ -8,9 +8,6 @@ import test.Index;
 import test.Matrix;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -47,43 +44,17 @@ public class MatrixAsGraph implements Traversable<Index> {
 	}
 
 	@Override
-	public Collection<GraphNode<Index>> getReachableNodes(final GraphNode<Index> source) {
+	public Collection<GraphNode<Index>> getReachableNodes(final GraphNode<Index> source, final boolean diagonal) {
 		return this.matrix
-				.getReachables(source.getData())
+				.getReachables(source.getData(), diagonal)
 				.stream()
 				.map(neighbor -> new GraphNode<>(neighbor, source))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Map<Direction, GraphNode<Index>> getReachableNodesWithDirections(final GraphNode<Index> source) {
-		if (source.getData() == null) throw new NullPointerException();
-		HashMap<Direction, GraphNode<Index>> result = new HashMap<>();
-		return this.matrix
-				.getReachables(source.getData(), false)
-				.stream()
-				.map((Function<Index, GraphNode<Index>>) GraphNode::new)
-				.collect(Collectors.toMap(indexGraphNode -> {
-					Index data = indexGraphNode.getData();
-					int srcCol = source.getData().column;
-					Direction dir = null;
-					if (data != null) {
-						int column = data.column;
-						int row = data.row;
-						if (column < srcCol) {
-							dir = Direction.WEST;
-						} else if (column > srcCol) {
-							dir = Direction.EAST;
-						} else {
-							if (row > source.getData().row) {
-								dir = Direction.SOUTH;
-							} else if (row < source.getData().row) {
-								dir = Direction.NORTH;
-							}
-						}
-					}
-					return dir;
-				}, indexGraphNode -> indexGraphNode));
+	public Collection<GraphNode<Index>> getReachableNodes(final GraphNode<Index> source) {
+		return getReachableNodes(source, true);
 	}
 
 
