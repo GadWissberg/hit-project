@@ -25,7 +25,7 @@ public class SubmarinesHandler extends BaseHandler<Index> {
 		final int[] result = {0};
 		if (matrix != null) {
 			AdjacentHandler adjacentHandler = new AdjacentHandler();
-			components = adjacentHandler.findAllComponents(matrix, false);
+			components = adjacentHandler.findAllComponents(matrix, executor, false);
 			components.forEach(component -> {
 				if (result[0] > -1) {
 					if (component.size() > 1) {
