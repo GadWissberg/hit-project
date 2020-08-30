@@ -1,7 +1,6 @@
-package handlers.types;
+package handlers.types.first;
 
 import graph.MatrixAsGraph;
-import graph.Traverse;
 import graph.TraverseLogic;
 import handlers.BaseHandler;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +21,12 @@ public class AdjacentHandler extends BaseHandler<Index> {
 	private static final String RESPONSE_RESULT = "result";
 	private static final int NUMBER_OF_THREADS = 4;
 
+	public AdjacentHandler(final Matrix matrix) {
+		this.setMatrix(matrix);
+	}
+
+	public AdjacentHandler() {
+	}
 
 	@Override
 	public void begin(final ThreadPoolExecutor executor, final ObjectOutputStream objectOutputStream) {
@@ -103,7 +108,7 @@ public class AdjacentHandler extends BaseHandler<Index> {
 								final int rowEnd,
 								final int columnStart,
 								final int columnEnd) {
-		Traverse<Index> algorithm = new TraverseLogic<>();
+		FindAdjacentAlgorithm<Index> algorithm = new FindAdjacentAlgorithm<>();
 		for (int i = rowStart; i < rowEnd; i++) {
 			for (int j = columnStart; j < columnEnd; j++) {
 				final Index source = new Index(i, j);

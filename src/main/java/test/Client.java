@@ -27,10 +27,10 @@ public class Client {
 		ObjectOutputStream toServer = new ObjectOutputStream(outputStream);
 		ObjectInputStream fromServer = new ObjectInputStream(inputStream);
 
-		doFirstMission(toServer, fromServer);
+//		doFirstMission(toServer, fromServer);
 //		doSecondMission(toServer, fromServer);
 //		doThirdMission(toServer, fromServer);
-//		doFourthMission(toServer, fromServer);
+		doFourthMission(toServer, fromServer);
 
 		System.out.println("client::Close all streams!!!!");
 		fromServer.close();
@@ -75,18 +75,18 @@ public class Client {
 		toServer.writeObject(TASK_HEADER_TASK_2);
 
 		int[][] matrix = {
-				{0, 1, 0},
-				{1, 1, 1},
-				{1, 0, 1},
+				{1, 0, 0, 1, 0},
+				{0, 1, 0, 0, 1},
+				{1, 0, 1, 1, 1},
 		};
 		toServer.writeObject(TASKS_INPUT_MATRIX);
 		toServer.writeObject(matrix);
 
 		toServer.writeObject(TASKS_INPUT_SOURCE);
-		toServer.writeObject(new Index(2, 0));
+		toServer.writeObject(new Index(0, 0));
 
 		toServer.writeObject(TASKS_INPUT_DESTINATION);
-		toServer.writeObject(new Index(2, 2));
+		toServer.writeObject(new Index(2, 4));
 
 		toServer.writeObject(TASKS_COMMAND_BEGIN);
 
@@ -140,29 +140,50 @@ public class Client {
 
 		int[][] matrix = {
 				{1, 1, 0, 1, 1},
-				{0, 0, 0, 1, 1},
-				{1, 1, 0, 1, 1},
+				{1, 0, 0, 1, 1},
+				{1, 0, 0, 1, 1},
 		};
+		sendMatrixForFourthMission(matrix, toServer, fromServer);
+
+		matrix = new int[][]{
+				{1, 0, 0, 1, 1},
+				{1, 0, 0, 1, 1},
+				{0, 1, 0, 1, 1}
+		};
+		sendMatrixForFourthMission(matrix, toServer, fromServer);
+
+		matrix = new int[][]{
+				{1, 0, 0, 1, 1},
+				{1, 0, 0, 1, 1},
+				{1, 0, 0, 1, 1}
+		};
+		sendMatrixForFourthMission(matrix, toServer, fromServer);
+
+		matrix = new int[][]{
+				{1, 1, 0, 1, 1},
+				{0, 0, 0, 1, 1},
+				{1, 1, 0, 1, 1}
+		};
+		sendMatrixForFourthMission(matrix, toServer, fromServer);
+
+		toServer.writeObject(TASKS_COMMAND_STOP);
+	}
+
+	private static void sendMatrixForFourthMission(final int[][] matrix,
+												   final ObjectOutputStream toServer,
+												   final ObjectInputStream fromServer) throws IOException {
 		toServer.writeObject(TASKS_INPUT_MATRIX);
 		toServer.writeObject(matrix);
-
-		toServer.writeObject(TASKS_INPUT_SOURCE);
-		toServer.writeObject(new Index(1, 0));
-
-		toServer.writeObject(TASKS_INPUT_DESTINATION);
-		toServer.writeObject(new Index(1, 3));
 
 		toServer.writeObject(TASKS_COMMAND_BEGIN);
 
 
 		try {
 			String result = (String) fromServer.readObject();
-			System.out.printf(LOG_TASK_RESULT, 3);
+			System.out.printf(LOG_TASK_RESULT, 4);
 			System.out.println(result);
 		} catch (final ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		toServer.writeObject(TASKS_COMMAND_STOP);
 	}
 }

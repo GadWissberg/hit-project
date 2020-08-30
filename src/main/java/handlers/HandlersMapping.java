@@ -1,9 +1,9 @@
 package handlers;
 
-import handlers.types.AdjacentHandler;
-import handlers.types.RoutesHandler;
-import handlers.types.ShortestPathsHandler;
-import handlers.types.SubmarinesHandler;
+import handlers.types.first.AdjacentHandler;
+import handlers.types.fourth.SubmarinesHandler;
+import handlers.types.second.RoutesHandler;
+import handlers.types.third.ShortestPathsHandler;
 import lombok.Getter;
 
 @Getter

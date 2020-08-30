@@ -1,7 +1,6 @@
-package handlers.types;
+package handlers.types.second;
 
 import graph.MatrixAsGraph;
-import graph.TraverseLogic;
 import handlers.BaseHandler;
 import handlers.RoutesResult;
 import lombok.Setter;
@@ -18,9 +17,11 @@ public class RoutesHandler extends BaseHandler<Index> {
 
 	@Override
 	public void begin(final ThreadPoolExecutor executor, final ObjectOutputStream objectOutputStream) {
-		TraverseLogic<Index> algorithm = new TraverseLogic<>();
+		FindRoutesAlgorithm<Index> algorithm = new FindRoutesAlgorithm<>();
 		MatrixAsGraph graph = new MatrixAsGraph(getMatrix(), super.getSource());
-		RoutesResult<Index> result = algorithm.findRoutes(graph, getSource(), getDestination(), executor, Collections.EMPTY_SET);
+		Index source = getSource();
+		Index destination = getDestination();
+		RoutesResult<Index> result = algorithm.findRoutes(graph, source, destination, executor, Collections.EMPTY_SET);
 		result.sort();
 		try {
 			objectOutputStream.writeObject(result.toString());
