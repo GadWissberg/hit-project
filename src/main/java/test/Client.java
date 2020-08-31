@@ -27,10 +27,10 @@ public class Client {
 		ObjectOutputStream toServer = new ObjectOutputStream(outputStream);
 		ObjectInputStream fromServer = new ObjectInputStream(inputStream);
 
-//		doFirstMission(toServer, fromServer);
+		doFirstMission(toServer, fromServer);
 //		doSecondMission(toServer, fromServer);
 //		doThirdMission(toServer, fromServer);
-		doFourthMission(toServer, fromServer);
+//		doFourthMission(toServer, fromServer);
 
 		System.out.println("client::Close all streams!!!!");
 		fromServer.close();

@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-public class TraverseLogic<T> implements Traverse<T> {
+public abstract class TraverseLogic<T> implements Traverse<T> {
 	protected final ThreadLocal<Collection<GraphNode<T>>> greyCollection;
 	protected final ThreadLocal<Set<GraphNode<T>>> blackCollection;
 
@@ -24,7 +24,6 @@ public class TraverseLogic<T> implements Traverse<T> {
 	protected GraphNode<T> popFromLocalGrayStack() throws RuntimeException {
 		return ((Stack<GraphNode<T>>) this.greyCollection.get()).pop();
 	}
-
 
 
 }

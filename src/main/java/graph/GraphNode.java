@@ -9,15 +9,12 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Represents a Node in a graph
- * contains data of parametric type T and a reference to parent node
- */
 public class GraphNode<T> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Getter(AccessLevel.PUBLIC)
 	private @Nullable T data;
+
 	private @Nullable GraphNode<T> parent;
 
 	public GraphNode() {

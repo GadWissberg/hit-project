@@ -10,18 +10,9 @@ import test.Matrix;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-/**
- * 1. Primitive 2D array-> Matrix Type + Index
- * 2. Interface that represents a traversable graph ->  matrix to traversable graph
- * 3. The traversing Logic!
- * return to the problem definition: given a 2D binary matrix, return all
- * subsets of 1's (discover all SCC groups)
- */
 
-
-// This class represents a matrix that can be traversed as a graph. i.e.,
-// has an origin and the ability to get reachable nodes from a given source
 public class MatrixAsGraph implements Traversable<Index> {
+	public static final String MSG_NOT_INITIALIZED = "Source index NOT initialized";
 	private final Matrix matrix;
 
 	@Getter(AccessLevel.PUBLIC)
@@ -39,7 +30,7 @@ public class MatrixAsGraph implements Traversable<Index> {
 
 	@Override
 	public GraphNode<Index> getOrigin() {
-		if (this.root == null) throw new NullPointerException("Source index NOT initialized");
+		if (this.root == null) throw new NullPointerException(MSG_NOT_INITIALIZED);
 		return new GraphNode<>(this.root);
 	}
 

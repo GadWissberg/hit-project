@@ -1,7 +1,6 @@
 package handlers.types.first;
 
 import graph.MatrixAsGraph;
-import graph.TraverseLogic;
 import handlers.BaseHandler;
 import org.jetbrains.annotations.NotNull;
 import test.Index;
@@ -50,21 +49,21 @@ public class AdjacentHandler extends BaseHandler<Index> {
 	public List<HashSet<Index>> findAllComponents(final Matrix matrix,
 												  final ThreadPoolExecutor executor,
 												  final boolean diagonal) {
-		TraverseLogic<Index> logic = new TraverseLogic<>();
+		FindAdjacentAlgorithm<Index> logic = new FindAdjacentAlgorithm<>();
 		MatrixAsGraph graph = new MatrixAsGraph(matrix);
 		List<HashSet<Index>> indexList = Collections.synchronizedList(new ArrayList<>());
 		Set<Index> seenIndices = Collections.newSetFromMap(new ConcurrentHashMap<>());
 		int[][] primitiveMatrix = matrix.getPrimitiveMatrix();
-		Future<?> topLeft = executor.submit(() -> {
-			findComponents(
-					graph,
-					seenIndices,
-					indexList,
-					diagonal,
-					0, primitiveMatrix.length / 2,
-					0, primitiveMatrix[0].length / 2
-			);
-		});
+
+		// Create 4 threads to scan components.
+		Future<?> topLeft = executor.submit(() -> findComponents(
+				graph,
+				seenIndices,
+				indexList,
+				diagonal,
+				0, primitiveMatrix.length / 2,
+				0, primitiveMatrix[0].length / 2
+		));
 		Future<?> topRight = executor.submit(() -> findComponents(
 				graph,
 				seenIndices,
@@ -109,10 +108,16 @@ public class AdjacentHandler extends BaseHandler<Index> {
 								final int columnStart,
 								final int columnEnd) {
 		FindAdjacentAlgorithm<Index> algorithm = new FindAdjacentAlgorithm<>();
+
+		// Scan the given zone in the matrix.
 		for (int i = rowStart; i < rowEnd; i++) {
 			for (int j = columnStart; j < columnEnd; j++) {
 				final Index source = new Index(i, j);
+
+				// Only 1's are relevant.
 				if (getMatrix().getValue(source) == 1) {
+
+					// seenIndices is a mutual collection, thus manipulating it should be synchronized.
 					synchronized (AdjacentHandler.this) {
 						if (seenIndices.contains(source)) {
 							continue;
@@ -120,6 +125,7 @@ public class AdjacentHandler extends BaseHandler<Index> {
 							seenIndices.add(source);
 						}
 					}
+
 					HashSet<Index> hashSet = new HashSet<>(algorithm.findConnectedComponents(graph, source, seenIndices, diagonal));
 					if (!hashSet.isEmpty()) {
 						indexList.add(hashSet);

@@ -35,6 +35,14 @@ public abstract class BaseHandler<T> implements Handler {
 		}
 	}
 
+	@Override
+	public void reset() {
+		stopped = false;
+		source = null;
+		destination = null;
+		matrix = null;
+	}
+
 	public abstract void begin(final ThreadPoolExecutor executor, final ObjectOutputStream objectOutputStream);
 
 	public void stop() {
