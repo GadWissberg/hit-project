@@ -25,7 +25,12 @@ public class Server {
 	public static final String HANDLING_CLIENT_REQUEST = "Handling client request.";
 	public static final String REQUEST_DONE = "Request served. Closing sockets.";
 	private final int port;
+
+	/**
+	 * Volatile used to be synchronized with same value for all threads at the same time.
+	 */
 	private volatile boolean stopServer;
+
 	private ThreadPoolExecutor executor;
 
 	public Server(final int port) {
@@ -42,14 +47,21 @@ public class Server {
 		server.run(handlersMapping);
 	}
 
+	/**
+	 * The main thread creates a new thread which creates and manages all threads.
+	 *
+	 * @param handlersMap
+	 */
 	public void run(final Map<String, Handler> handlersMap) {
-
 		Runnable main = () -> {
 			try {
+				// Executor gives the ability to create and manage threads efficiently.
 				executor = new ThreadPoolExecutor(
 						CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+
 				ServerSocket server = new ServerSocket(port);
 				server.setSoTimeout(1000);
+
 				while (!stopServer) {
 					serve(handlersMap, server);
 				}
@@ -65,16 +77,21 @@ public class Server {
 		try {
 			Socket request = server.accept();
 			System.out.println(CLIENT_ACCEPTED);
+
+			// Create a runnable to act as to-do list for the new thread.
 			Runnable runnable = () -> {
 				try {
 					System.out.println(HANDLING_CLIENT_REQUEST);
 					ObjectOutputStream objectOutputStream = new ObjectOutputStream(request.getOutputStream());
 					ObjectInputStream objectInputStream = new ObjectInputStream(request.getInputStream());
 					String commandString = objectInputStream.readObject().toString();
-					Handler handler = null;
+					Handler handler;
 					if (handlersMap.containsKey(commandString)) {
 						handler = handlersMap.get(commandString);
+
+						// The point where the task is actually executed.
 						handler.handle(objectInputStream, objectOutputStream, executor);
+
 						handler.reset();
 						objectInputStream.close();
 						objectOutputStream.close();

@@ -27,7 +27,7 @@ public class FindAdjacentAlgorithm<T> extends TraverseLogic<T> {
 		Set<GraphNode<T>> black = this.blackCollection.get();
 
 		pushToLocalStack(new GraphNode<>(source));
-		black.clear(); // do not remove
+		black.clear();
 
 		// DFS
 		while (!grey.isEmpty()) {

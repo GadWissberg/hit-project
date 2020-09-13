@@ -27,7 +27,7 @@ public class Client {
 		ObjectOutputStream toServer = new ObjectOutputStream(outputStream);
 		ObjectInputStream fromServer = new ObjectInputStream(inputStream);
 
-		doFirstMission(toServer, fromServer);
+//		doFirstMission(toServer, fromServer);
 //		doSecondMission(toServer, fromServer);
 //		doThirdMission(toServer, fromServer);
 //		doFourthMission(toServer, fromServer);
@@ -57,6 +57,7 @@ public class Client {
 
 		toServer.writeObject(TASKS_COMMAND_BEGIN);
 
+		// This is blocked 'till the result comes.
 		try {
 			List<HashSet<Index>> result = (List<HashSet<Index>>) fromServer.readObject();
 			System.out.printf(LOG_TASK_RESULT, 1);
